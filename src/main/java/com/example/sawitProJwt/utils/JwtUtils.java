@@ -5,8 +5,7 @@ import com.example.sawitProJwt.exception.TokenInvalidException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -18,7 +17,11 @@ import java.util.Date;
 public class JwtUtils {
     private static PrivateKey getPrivateKey(String privateFile) throws TokenInvalidException {
         try {
-            String privateKeyContent = new String(Files.readAllBytes(Paths.get(privateFile)));
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            InputStream inputStream = classLoader.getResourceAsStream(privateFile);
+            byte[] privateKeyBytesFile = inputStream.readAllBytes();
+            inputStream.close();
+            String privateKeyContent = new String(privateKeyBytesFile);
             privateKeyContent = privateKeyContent.replace("-----BEGIN PRIVATE KEY-----\n", "")
                     .replace("\n-----END PRIVATE KEY-----\n", "")
                     .replace("\n", "");
@@ -36,7 +39,11 @@ public class JwtUtils {
 
     private static PublicKey getPublicKey(String publicFile) throws TokenInvalidException {
         try {
-            String publicKeyContent = new String(Files.readAllBytes(Paths.get(PropertiesData.PUBLIC_FILE)));
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            InputStream inputStream = classLoader.getResourceAsStream(publicFile);
+            byte[] privateKeyBytesFile = inputStream.readAllBytes();
+            inputStream.close();
+            String publicKeyContent = new String(privateKeyBytesFile);
             publicKeyContent = publicKeyContent.replace("-----BEGIN PUBLIC KEY-----\n", "")
                     .replace("\n-----END PUBLIC KEY-----\n", "")
                     .replace("\n", "");
